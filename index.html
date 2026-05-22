@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fundraising Clarity Bubble — Free Mini Calculator</title>
+<style>
+  :root{
+    --ink:#172033;
+    --muted:#5f6b7a;
+    --paper:#fffaf0;
+    --gold:#f5b942;
+    --blue:#285cc7;
+    --green:#24b26b;
+    --rose:#e85d75;
+    --purple:#7c3aed;
+    --line:rgba(23,32,51,.13);
+    --shadow:0 24px 70px rgba(31,41,55,.18);
+    --radius:24px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 25% 10%, rgba(255,231,161,.9), transparent 26%),
+      radial-gradient(circle at 80% 6%, rgba(116,185,255,.35), transparent 28%),
+      radial-gradient(circle at 50% 70%, rgba(124,58,237,.14), transparent 34%),
+      linear-gradient(135deg,#fffaf0 0%,#f6fbff 46%,#fff5f7 100%);
+    overflow-x:hidden;
+  }
+  body:before{
+    content:"";
+    position:fixed;
+    inset:-20%;
+    background:radial-gradient(circle, rgba(255,255,255,.75) 0 1px, transparent 1px 100%);
+    background-size:42px 42px;
+    mask-image:linear-gradient(to bottom, transparent 0%, black 20%, black 78%, transparent 100%);
+    pointer-events:none;
+    opacity:.35;
+  }
+  .wrap{max-width:1160px;margin:0 auto;padding:26px 18px 70px;position:relative;z-index:1}
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0 28px;font-weight:800}
+  .brand{display:flex;align-items:center;gap:10px;letter-spacing:-.03em;font-size:1.05rem}
+  .brandmark{width:38px;height:38px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--purple));display:grid;place-items:center;color:white;box-shadow:0 10px 28px rgba(40,92,199,.28)}
+  .pill{border:1px solid var(--line);background:rgba(255,255,255,.7);backdrop-filter:blur(14px);border-radius:999px;padding:9px 14px;font-size:.78rem;color:var(--muted);font-weight:800;white-space:nowrap}
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:center;min-height:600px}
+  .kicker{color:#7a4b00;background:rgba(255,231,161,.72);border:1px solid rgba(245,185,66,.45);display:inline-flex;gap:8px;align-items:center;border-radius:999px;padding:8px 12px;font-weight:900;font-size:.76rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:16px}
+  h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.7rem,6vw,5.8rem);line-height:.9;letter-spacing:-.07em;margin:0 0 18px}
+  .lead{font-size:clamp(1.05rem,2vw,1.32rem);line-height:1.6;color:#3c4656;max-width:690px;margin:0 0 24px}
+  .lead strong{color:#111827}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+  .btn{border:0;border-radius:16px;padding:14px 18px;font-weight:950;letter-spacing:-.01em;cursor:pointer;transition:.18s ease;box-shadow:0 12px 28px rgba(23,32,51,.12);text-decoration:none;display:inline-flex;gap:8px;align-items:center;justify-content:center;font-size:.95rem}
+  .btn-primary{color:white;background:linear-gradient(135deg,var(--blue),var(--purple))}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 34px rgba(40,92,199,.2)}
+  .btn-soft{color:#182033;background:rgba(255,255,255,.74);border:1px solid var(--line)}
+  .btn-soft:hover{background:white;transform:translateY(-2px)}
+  .micro{margin-top:16px;font-size:.88rem;color:var(--muted);line-height:1.55}
+  .orb-stage{position:relative;min-height:560px;display:grid;place-items:center}
+  .orb{width:min(510px,88vw);aspect-ratio:1/1;border-radius:999px;background:radial-gradient(circle at 42% 34%, rgba(255,255,255,.96) 0 5%, rgba(255,255,255,.68) 6% 19%, transparent 20%),radial-gradient(circle at 50% 50%, rgba(255,255,255,.84) 0 27%, rgba(255,231,161,.42) 41%, rgba(116,185,255,.34) 58%, rgba(124,58,237,.18) 72%, transparent 75%);box-shadow:inset 0 0 38px rgba(255,255,255,.72),inset 0 0 90px rgba(116,185,255,.22),0 0 52px rgba(255,231,161,.65),0 0 120px rgba(124,58,237,.18);border:1px solid rgba(255,255,255,.7);animation:float 7s ease-in-out infinite;position:relative}
+  .orb:before,.orb:after{content:"";position:absolute;border-radius:999px;inset:9%;border:1px solid rgba(255,255,255,.7);transform:rotate(18deg)}
+  .orb:after{inset:19%;border-color:rgba(255,231,161,.7);transform:rotate(-18deg)}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-16px) scale(1.015)}}
+  .glass-card{position:absolute;width:min(410px,82vw);background:rgba(255,255,255,.75);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.76);border-radius:26px;box-shadow:var(--shadow);padding:24px}
+  .glass-card h2{margin:0 0 8px;font-size:1.32rem;letter-spacing:-.04em}
+  .glass-card p{margin:0 0 15px;color:#465468;line-height:1.5;font-size:.95rem}
+  .mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .mini-stat{background:rgba(255,255,255,.84);border:1px solid var(--line);border-radius:16px;padding:12px 10px}
+  .mini-stat b{display:block;font-size:1.2rem}
+  .mini-stat span{display:block;font-size:.68rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+  .section{margin-top:28px;padding:32px;border-radius:var(--radius);background:rgba(255,255,255,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.75);box-shadow:0 16px 44px rgba(23,32,51,.08)}
+  .section h2{margin:0 0 8px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2rem,4vw,3.6rem);letter-spacing:-.06em;line-height:.95}
+  .section p.sub{margin:0 0 22px;color:var(--muted);line-height:1.6;max-width:760px}
+  .notice{background:rgba(255,231,161,.55);border:1px solid rgba(245,185,66,.4);border-radius:18px;padding:14px 16px;margin-bottom:18px;color:#5f3b00;font-weight:750;line-height:1.5}
+  .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .field{display:flex;flex-direction:column;gap:7px}
+  .field.full{grid-column:1/-1}
+  label{font-size:.78rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#536174}
+  input,textarea,select{width:100%;border:1px solid rgba(23,32,51,.14);border-radius:16px;background:rgba(255,255,255,.88);padding:13px 14px;color:var(--ink);outline:none;font:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+  textarea{min-height:92px;resize:vertical}
+  input:focus,textarea:focus,select:focus{border-color:rgba(40,92,199,.56);box-shadow:0 0 0 4px rgba(40,92,199,.12)}
+  .result{margin-top:18px;display:grid;grid-template-columns:1fr .82fr;gap:16px}
+  .story-box{background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(255,247,223,.92));border:1px solid var(--line);border-radius:22px;padding:22px}
+  .story-box h3{margin:0 0 10px;font-size:1.22rem;letter-spacing:-.035em}
+  .story-box p{color:#3d4859;line-height:1.68;margin:0 0 14px}
+  .copy-box{background:#111827;color:#f9fafb;border-radius:18px;padding:16px;line-height:1.55;font-size:.92rem;white-space:pre-wrap}
+  .score-card{background:linear-gradient(135deg,#172033,#27314a);color:white;border-radius:22px;padding:22px;position:relative;overflow:hidden}
+  .score-card:before{content:"";position:absolute;width:230px;height:230px;border-radius:999px;background:radial-gradient(circle,rgba(255,231,161,.4),transparent 62%);right:-70px;top:-70px}
+  .score-card .num{font-size:2rem;font-weight:950;position:relative}
+  .score-card .small{font-size:.8rem;opacity:.78;line-height:1.5;position:relative}
+  .bar{height:14px;background:rgba(255,255,255,.16);border-radius:999px;overflow:hidden;margin:15px 0;position:relative}
+  .bar span{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#fff1b8);border-radius:999px;transition:.5s ease}
+  .calc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px;position:relative}
+  .calc-item{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:12px}
+  .calc-item b{display:block;font-size:1.15rem}
+  .calc-item span{display:block;font-size:.68rem;opacity:.72;text-transform:uppercase;letter-spacing:.08em;font-weight:900;margin-top:2px}
+  .ideas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+  .idea{background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:20px;padding:18px}
+  .idea b{display:block;margin-bottom:8px;font-size:1rem}
+  .idea p{margin:0;color:#536174;font-size:.9rem;line-height:1.55}
+  .tag{display:inline-flex;padding:5px 9px;border-radius:999px;background:rgba(40,92,199,.1);color:#214aa5;font-weight:900;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+  .locked{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+  .lock-card{border-radius:22px;padding:22px;border:1px dashed rgba(23,32,51,.23);background:linear-gradient(135deg,rgba(255,255,255,.64),rgba(255,255,255,.35))}
+  .lock-card h3{margin:0 0 8px}
+  .lock-card ul{margin:12px 0 0;padding-left:20px;color:#4c5869;line-height:1.75}
+  .cta{margin-top:28px;text-align:center;background:radial-gradient(circle at 50% 0%,rgba(255,231,161,.55),transparent 40%),linear-gradient(135deg,#172033,#1e2b4d 54%,#2b185d);color:white;border-radius:32px;padding:42px 24px;box-shadow:0 24px 70px rgba(23,32,51,.22);overflow:hidden;position:relative}
+  .cta:before{content:"";position:absolute;inset:-40%;background:radial-gradient(circle,rgba(255,255,255,.18) 0 1px,transparent 1px 100%);background-size:44px 44px;animation:drift 15s linear infinite}
+  @keyframes drift{to{transform:translate(44px,44px)}}
+  .cta>*{position:relative}
+  .cta h2{margin:0 0 12px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2rem,5vw,4rem);letter-spacing:-.06em;line-height:.92}
+  .cta p{max-width:760px;margin:0 auto 22px;color:rgba(255,255,255,.82);line-height:1.65}
+  .cta .btn-primary{background:linear-gradient(135deg,var(--gold),#fff0a3);color:#152033}
+  .footer{color:var(--muted);font-size:.8rem;text-align:center;margin-top:22px;line-height:1.55}
+  @media(max-width:880px){.hero,.result,.locked{grid-template-columns:1fr}.hero{min-height:auto}.orb-stage{min-height:480px}.ideas{grid-template-columns:1fr}}
+  @media(max-width:620px){.topbar{align-items:flex-start;flex-direction:column}.section{padding:22px}.form-grid{grid-template-columns:1fr}.hero-actions .btn{width:100%}.mini-stats,.calc-grid{grid-template-columns:1fr}}
+  @media print{body{background:white}.btn,.topbar .pill,.footer{display:none!important}.section,.cta{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand"><span class="brandmark">✨</span> Fundraising Clarity Bubble</div>
+    <div class="pill">Free Mini Calculator · Live Update · Works Offline</div>
+  </header>
+
+  <main class="hero">
+    <div>
+      <div class="kicker">🎯 For churches, teams, schools & clubs</div>
+      <h1>Step inside the fundraiser before it succeeds.</h1>
+      <p class="lead">
+        Most groups do not need more pressure. They need a clear picture of the finish line.
+        This free mini tool helps your team <strong>feel the goal, see the gap, and know the next move</strong> before the stress takes over.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#bubble">Open the Mini Calculator</a>
+        <a class="btn btn-soft" href="#unlock">See What the Paid Version Unlocks</a>
+        <a class="btn btn-primary" href="https://www.etsy.com/listing/4507363360/2026-fundraising-ideas-digital-planner" target="_blank" rel="noopener">Get the Full Version on Etsy →</a>
+      </div>
+      <p class="micro">
+        Change the organization name, goal, amount raised, days left, average gift, and purpose. Then click the button to create a new future-state message.
+      </p>
+    </div>
+
+    <div class="orb-stage" aria-hidden="true">
+      <div class="orb"></div>
+      <div class="glass-card">
+        <h2>The moment the room changes.</h2>
+        <p>
+          The goal stops feeling impossible. The team sees the path. Every donor, sponsor, and action step becomes part of one clear story.
+        </p>
+        <div class="mini-stats">
+          <div class="mini-stat"><b id="previewGoal">$10k</b><span>Goal</span></div>
+          <div class="mini-stat"><b id="previewDays">30</b><span>Days</span></div>
+          <div class="mini-stat"><b id="previewDaily">$317</b><span>Daily</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <section class="section" id="bubble">
+    <h2>Mini calculator + future-state message.</h2>
+    <p class="sub">
+      This is the free lead magnet. They fill in their own numbers, click the button, and the page creates a fresh belief-building message for their exact fundraiser.
+    </p>
+
+    <div class="notice">
+      ✨ Change any field below. The organization name and purpose are used directly in the new future-state message. Click <strong>Generate New Message</strong> after changing the numbers.
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Organization / Team Name</label>
+        <input id="org" value="Maplewood Elementary PTO" oninput="quickPreview()" />
+      </div>
+      <div class="field">
+        <label>Fundraising Goal</label>
+        <input id="goal" type="number" value="10000" min="0" oninput="quickPreview()" />
+      </div>
+      <div class="field">
+        <label>Already Raised</label>
+        <input id="raised" type="number" value="500" min="0" oninput="quickPreview()" />
+      </div>
+      <div class="field">
+        <label>Days Left</label>
+        <input id="days" type="number" value="30" min="1" oninput="quickPreview()" />
+      </div>
+      <div class="field">
+        <label>Average Gift</label>
+        <input id="avg" type="number" value="50" min="1" oninput="quickPreview()" />
+      </div>
+      <div class="field">
+        <label>Fundraiser Type</label>
+        <select id="type" onchange="quickPreview()">
+          <option>School fundraiser</option>
+          <option>Church fundraiser</option>
+          <option>Youth sports fundraiser</option>
+          <option>Booster club fundraiser</option>
+          <option>Community nonprofit fundraiser</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label>What will the money make possible?</label>
+        <textarea id="why" oninput="quickPreview()">New playground equipment that gives the children a safer, brighter place to play.</textarea>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="createBubble()">✨ Generate New Message</button>
+      <button class="btn btn-soft" onclick="resetBlank()">📝 Clear Fields</button>
+      <button class="btn btn-soft" onclick="useSample()">⚡ Autofill Example</button>
+      <button class="btn btn-soft" onclick="window.print()">🖨️ Print / Save PDF</button>
+      <a class="btn btn-primary" href="https://www.etsy.com/listing/4507363360/2026-fundraising-ideas-digital-planner" target="_blank" rel="noopener">Get the Full Planner on Etsy →</a>
+    </div>
+
+    <div class="result" id="result">
+      <div class="story-box">
+        <h3 id="storyTitle">Future-state message for Maplewood Elementary PTO</h3>
+        <p id="message"></p>
+        <h3>Short CTA message</h3>
+        <div class="copy-box" id="shortMessage"></div>
+      </div>
+      <div class="score-card">
+        <div class="small">Mini Calculator Results</div>
+        <div class="num" id="progressNum">0%</div>
+        <div class="bar"><span id="progressBar"></span></div>
+        <div class="small" id="mathLine"></div>
+        <div class="calc-grid">
+          <div class="calc-item"><b id="remainingOut">$0</b><span>Still Needed</span></div>
+          <div class="calc-item"><b id="dailyOut">$0</b><span>Needed Per Day</span></div>
+          <div class="calc-item"><b id="donorsOut">0</b><span>More Gifts Needed</span></div>
+          <div class="calc-item"><b id="weeklyOut">$0</b><span>Needed Per Week</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Six quick ideas to start motion.</h2>
+    <p class="sub">
+      The free version gives a spark. The paid Command Center gives the full campaign map, trackers, sponsor system, and 40+ idea library.
+    </p>
+    <div class="ideas">
+      <div class="idea"><span class="tag">Fast</span><b>Envelope Wall</b><p>Number envelopes from $1–$100 and let donors pick one. Simple, visual, and surprisingly motivating.</p></div>
+      <div class="idea"><span class="tag">Local</span><b>Business Sponsor Drive</b><p>Ask nearby businesses for $100, $250, or $500 sponsor spots with public recognition.</p></div>
+      <div class="idea"><span class="tag">School</span><b>Fun Run</b><p>Students collect pledges per lap or flat gifts. Great energy, high visibility, and easy to explain.</p></div>
+      <div class="idea"><span class="tag">Church</span><b>Pancake Breakfast</b><p>A warm community event with simple tickets, donations, and sponsor tables.</p></div>
+      <div class="idea"><span class="tag">Online</span><b>48-Hour Giving Push</b><p>Use a short deadline, text messages, social posts, and a clear “why now” story.</p></div>
+      <div class="idea"><span class="tag">Team</span><b>Sponsor-a-Player</b><p>Let supporters sponsor one athlete, student, or participant for a clear amount.</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="unlock">
+    <h2>The free version creates belief. The paid version organizes the win.</h2>
+    <p class="sub">
+      Once they feel the future state, show them the tool that keeps the whole fundraiser moving.
+    </p>
+    <div class="locked">
+      <div class="lock-card">
+        <h3>Free Mini Version</h3>
+        <ul>
+          <li>Future-state campaign message</li>
+          <li>Goal gap calculation</li>
+          <li>Daily and weekly target estimate</li>
+          <li>Estimated gifts needed</li>
+          <li>Six starter ideas</li>
+          <li>Print / Save PDF</li>
+        </ul>
+      </div>
+      <div class="lock-card">
+        <h3>Paid Command Center</h3>
+        <ul>
+          <li>Full campaign setup dashboard</li>
+          <li>40+ fundraising ideas library</li>
+          <li>Donation and pledge tracker</li>
+          <li>Sponsor tracker</li>
+          <li>Daily action timesheet</li>
+          <li>Goal planner and smart tips</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cta">
+      <h2>Ready to turn belief into a real campaign plan?</h2>
+      <p>
+        Get the full Fundraising Command Center and move from “we hope this works” to a clear goal, donor tracker, sponsor tracker, action plan, and printable campaign dashboard.
+      </p>
+      <a class="btn btn-primary" href="https://www.etsy.com/listing/4507363360/2026-fundraising-ideas-digital-planner" target="_blank" rel="noopener">Unlock the Paid Command Center →</a>
+      <a class="btn btn-soft" href="#bubble">Try the Free Calculator Again</a>
+    </div>
+  </section>
+
+  <p class="footer">
+    Free mini version. Data stays in this browser page and is not sent anywhere. The paid buttons now open the full Fundraising Digital Planner on Etsy.
+  </p>
+</div>
+
+<script>
+function money(n){
+  n = Number(n || 0);
+  return '$' + n.toLocaleString(undefined,{maximumFractionDigits:0});
+}
+function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+function cleanText(v, fallback){ return (v || '').trim() || fallback; }
+function getData(){
+  const org = cleanText(document.getElementById('org').value, 'your organization');
+  const goal = Math.max(0, Number(document.getElementById('goal').value || 0));
+  const raised = Math.max(0, Number(document.getElementById('raised').value || 0));
+  const days = Math.max(1, Number(document.getElementById('days').value || 1));
+  const avg = Math.max(1, Number(document.getElementById('avg').value || 1));
+  const why = cleanText(document.getElementById('why').value, 'something important for the people you serve');
+  const type = document.getElementById('type').value;
+  const remaining = Math.max(0, goal - raised);
+  const daily = remaining / days;
+  const weekly = daily * 7;
+  const donorsNeeded = Math.ceil(remaining / avg);
+  const progress = goal > 0 ? clamp((raised / goal) * 100, 0, 100) : 0;
+  return {org,goal,raised,days,avg,why,type,remaining,daily,weekly,donorsNeeded,progress};
+}
+function quickPreview(){
+  const d = getData();
+  document.getElementById('previewGoal').textContent = money(d.goal);
+  document.getElementById('previewDays').textContent = d.days;
+  document.getElementById('previewDaily').textContent = money(d.daily);
+}
+function createBubble(){
+  const d = getData();
+  const message = `${d.org} is not just running another ${d.type.toLowerCase()}. You are building a visible path toward ${d.why} The goal is ${money(d.goal)}. You have already brought in ${money(d.raised)}, which means ${money(d.remaining)} remains. That is not a wall — it is a map. For the next ${d.days} days, the campaign needs about ${money(d.daily)} per day, or about ${money(d.weekly)} per week. That means roughly ${d.donorsNeeded} more gifts at an average of ${money(d.avg)}. Now the room can breathe. The goal has a shape. The next move is clear.`;
+
+  const shortMessage = `Help ${d.org} reach ${money(d.goal)}.\n\nWe have already raised ${money(d.raised)}, and now we need ${money(d.remaining)} more for ${d.why}\n\nEvery gift moves the campaign closer. At an average gift of ${money(d.avg)}, we need about ${d.donorsNeeded} more gifts to reach the goal.\n\nWould you help us take the next step today?`;
+
+  document.getElementById('storyTitle').textContent = `Future-state message for ${d.org}`;
+  document.getElementById('message').textContent = message;
+  document.getElementById('shortMessage').textContent = shortMessage;
+
+  document.getElementById('progressNum').textContent = Math.round(d.progress) + '%';
+  document.getElementById('progressBar').style.width = d.progress + '%';
+  document.getElementById('mathLine').textContent = `${money(d.remaining)} remaining · ${money(d.daily)} per day · ${money(d.weekly)} per week · about ${d.donorsNeeded} gifts needed`;
+  document.getElementById('remainingOut').textContent = money(d.remaining);
+  document.getElementById('dailyOut').textContent = money(d.daily);
+  document.getElementById('weeklyOut').textContent = money(d.weekly);
+  document.getElementById('donorsOut').textContent = d.donorsNeeded;
+
+  quickPreview();
+  localStorage.setItem('fundraising_clarity_bubble_v2', JSON.stringify({
+    org:d.org, goal:d.goal, raised:d.raised, days:d.days, avg:d.avg, why:d.why, type:d.type
+  }));
+}
+function useSample(){
+  document.getElementById('org').value = 'Victory Youth Soccer';
+  document.getElementById('goal').value = 8500;
+  document.getElementById('raised').value = 1200;
+  document.getElementById('days').value = 21;
+  document.getElementById('avg').value = 75;
+  document.getElementById('type').value = 'Youth sports fundraiser';
+  document.getElementById('why').value = 'new uniforms, tournament fees, and travel support so every player can participate without money becoming the barrier.';
+  createBubble();
+}
+function resetBlank(){
+  document.getElementById('org').value = '';
+  document.getElementById('goal').value = '';
+  document.getElementById('raised').value = '';
+  document.getElementById('days').value = '30';
+  document.getElementById('avg').value = '';
+  document.getElementById('type').value = 'School fundraiser';
+  document.getElementById('why').value = '';
+  quickPreview();
+}
+(function init(){
+  const saved = localStorage.getItem('fundraising_clarity_bubble_v2');
+  if(saved){
+    try{
+      const d = JSON.parse(saved);
+      if(d.org) document.getElementById('org').value = d.org;
+      if(d.goal !== undefined) document.getElementById('goal').value = d.goal;
+      if(d.raised !== undefined) document.getElementById('raised').value = d.raised;
+      if(d.days) document.getElementById('days').value = d.days;
+      if(d.avg) document.getElementById('avg').value = d.avg;
+      if(d.why) document.getElementById('why').value = d.why;
+      if(d.type) document.getElementById('type').value = d.type;
+    }catch(err){}
+  }
+  createBubble();
+})();
+</script>
+</body>
+</html>
